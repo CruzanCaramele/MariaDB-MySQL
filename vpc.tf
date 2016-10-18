@@ -5,4 +5,36 @@ resource "aws_vpc" "database_setup" {
 	cidr_block           = "10.0.0.0/16"
 	enable_dns_support   = true
 	enable_dns_hostnames = true
+
+	tags {
+		Name = "database_setup"
+	}
+}
+
+#--------------------------------------------------------------
+# Internet Gateway
+#--------------------------------------------------------------
+resource "aws_internet_gateway" "database_gateway" {
+	vpc_id = "${aws_vpc.database_setup.id}"
+
+	tags {
+		Name = "database_internet_gateway"
+	}
+}
+#--------------------------------------------------------------
+# Private subnet
+#--------------------------------------------------------------
+resource "aws_subnet" "private" {
+	vpc_id            = "${aws_vpc.database_setup.id}"
+	availability_zone = "${element(split(",", var.azs), count.index)}"
+	cidr_block        = "${element(split(",", var.private_cidrs), count.index)}" 
+}
+
+#--------------------------------------------------------------
+# Public subnet
+#--------------------------------------------------------------
+resource "aws_subnet" "public" {
+	vpc_id            = "${aws_vpc.database_setup.id}"
+	availability_zone = "${element(split(",", var.azs), count.index)}"
+	cidr_block        = "${element(split(",", var.public_cidrs), count.index)}"
 }
