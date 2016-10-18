@@ -41,5 +41,10 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_route_table" "public_route_table" {
-	vpc_id = "${aws}"
+	vpc_id = "${aws_vpc.database_setup.id}"
+
+	route {
+		cidr_block = "0.0.0.0/0"
+		gateway_id = "${aws_internet_gateway.database_gateway.id}"
+	}
 }
