@@ -34,7 +34,12 @@ resource "aws_subnet" "private" {
 # Public subnet
 #--------------------------------------------------------------
 resource "aws_subnet" "public" {
-	vpc_id            = "${aws_vpc.database_setup.id}"
-	availability_zone = "${element(split(",", var.azs), count.index)}"
-	cidr_block        = "${element(split(",", var.public_cidrs), count.index)}"
+	vpc_id            		= "${aws_vpc.database_setup.id}"
+	availability_zone 		= "${element(split(",", var.azs), count.index)}"
+	cidr_block        		= "${element(split(",", var.public_cidrs), count.index)}"
+	map_public_ip_on_launch = true
+}
+
+resource "aws_route_table" "public_route_table" {
+	vpc_id = "${aws}"
 }
