@@ -10,7 +10,7 @@ resource "aws_security_group" "bastion_security" {
 		from_port   = 22
 		to_port     = 22
 		protocol    = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
+		cidr_blocks = ["61.6.109.231/32"]
 	}
 
   	tags {
