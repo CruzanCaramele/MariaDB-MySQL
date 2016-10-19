@@ -36,4 +36,13 @@ resource "aws_instance" "bastion_server" {
 	tags {
 		Name = "bastion_host"
 	}
+
+	provisioner "file" {
+		source      = "scripts/firewalld.sh"
+		destination = "/tmp/firewalld.sh"
+	}
+
+	provisioner "remote-exec" {
+		
+	}
 }
