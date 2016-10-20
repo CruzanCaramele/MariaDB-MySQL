@@ -44,7 +44,7 @@ resource "aws_instance" "bastion_server" {
 
 	provisioner "remote-exec" {
 		inline = [
-			"chmod +x /tmp/firewalld.sh"
+			"chmod +x /tmp/firewalld.sh",
 			"bash /tmp/firewalld.sh"
 		]
 	}
