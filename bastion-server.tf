@@ -14,12 +14,12 @@ data "aws_ami" "bastion_ami" {
 		values = ["aw0evgkw8e5c1q413zgy5pjce"]
 	}
 
-	filter {
-		name   = "name"
-		values = ["CentOS-7x86_64"]
-	}
+	# filter {
+	# 	name   = "name"
+	# 	values = ["CentOS-7x86_64"]
+	# }
 
-	owners = ["amazon"]
+	# owners = ["amazon"]
 }
 
 #--------------------------------------------------------------
