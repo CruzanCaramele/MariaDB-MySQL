@@ -53,3 +53,11 @@ resource "aws_iam_role_policy_attachment" "backup_policy_attachment" {
     role       = "${aws_iam_role.backup_role.name}"
     policy_arn = "${aws_iam_policy.backup_policy.arn}"
 }
+
+#--------------------------------------------------------------
+# IAM Instance Profile
+#--------------------------------------------------------------
+resource "aws_iam_instance_profile" "instance_profile" {
+  name  = "iam_instance_profile"
+  roles = ["${aws_iam_role.backup_role.name}"]
+}
