@@ -27,7 +27,29 @@ resource "aws_internet_gateway" "database_gateway" {
 resource "aws_subnet" "private" {
 	vpc_id            = "${aws_vpc.database_setup.id}"
 	availability_zone = "${element(split(",", var.azs), count.index)}"
-	cidr_block        = "${element(split(",", var.private_cidrs), count.index)}" 
+	cidr_block        = "${element(split(",", var.private_cidrs), count.index)}"
+}
+
+resource "aws_route_table" "private_route_table" {
+	vpc_id = "${aws_vpc.database_setup.id}"
+
+	route {
+		cidr_block  = "0.0.0.0/0"
+		instance_id = "${aws_instance.nat_instance.id}"
+	}
+
+	tags {
+		Name "private_route_table"
+	}
+}
+
+resource "aws_route_table_association" "private_route_table_association" {
+	subnet_id      = "${element(aws_subnet.private.*.id, count.index)}"
+	route_table_id = "${aws_route_table.private_route_table.id}"
+
+	tags {
+		Name = "private_route_table_association"
+	}
 }
 
 #--------------------------------------------------------------
