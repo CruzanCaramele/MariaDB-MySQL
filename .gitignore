@@ -18,3 +18,5 @@ terraform.tfstate.backup
 terraform.tfstate
 sonar.pub
 packerlog.txt
+id_rsa*
+id_rsa
