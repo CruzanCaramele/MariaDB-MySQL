@@ -10,7 +10,7 @@ resource "aws_security_group" "bastion_security" {
 		from_port   = 22
 		to_port     = 22
 		protocol    = "tcp"
-		cidr_blocks = ["61.6.109.231/32"]
+		cidr_blocks = ["0.0.0.0/0"]
 	}
 
 	egress {
@@ -48,7 +48,7 @@ resource "aws_security_group" "database_backup_security_group" {
 		from_port       = 3306
 		to_port         = 3306
 		protocol        = "tcp"
-		cidr_blocks     = ["10.0.2.0/24,10.0.3.0/24,10.0.0.0/24,10.0.1.0/24"]
+		cidr_blocks     = ["10.0.2.0/24","10.0.3.0/24","10.0.0.0/24","10.0.1.0/24"]
 	}
 
 	egress {
@@ -63,7 +63,7 @@ resource "aws_security_group" "database_backup_security_group" {
 # Database Master Instances' Security Group
 #--------------------------------------------------------------
 resource "aws_security_group" "database_master_security_group" {
-	name        = "database_backup_security_group"
+	name        = "database_master_security_group"
 	description = "Security group for ec2 master database instances"
 	vpc_id      = "${aws_vpc.database_setup.id}"
 
@@ -78,7 +78,7 @@ resource "aws_security_group" "database_master_security_group" {
 		from_port       = 3306
 		to_port         = 3306
 		protocol        = "tcp"
-		cidr_blocks     = ["10.0.2.0/24,10.0.3.0/24,10.0.0.0/24,10.0.1.0/24"]
+		cidr_blocks     = ["10.0.2.0/24","10.0.3.0/24","10.0.0.0/24","10.0.1.0/24"]
 	}
 
 	egress {
@@ -108,14 +108,14 @@ resource "aws_security_group" "nat_instance_security_group" {
 		from_port       = 80
 		to_port         = 80
 		protocol        = "tcp"
-		cidr_blocks     = ["10.0.0.0/24,10.0.1.0/24"]
+		cidr_blocks     = ["10.0.0.0/24","10.0.1.0/24"]
 	}
 
 	ingress {
 		from_port       = 443
 		to_port         = 443
 		protocol        = "tcp"
-		cidr_blocks     = ["10.0.0.0/24,10.0.1.0/24"]
+		cidr_blocks     = ["10.0.0.0/24","10.0.1.0/24"]
 	}
 
 	egress {
