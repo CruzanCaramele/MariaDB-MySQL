@@ -24,9 +24,6 @@ resource "aws_security_group" "bastion_security" {
   		Name = "bastion-server-security"
   	}
 
-	lifecycle {
-		create_before_destroy = true
-	}
 }
 
 #--------------------------------------------------------------
