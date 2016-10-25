@@ -23,6 +23,15 @@ variable "region" {
 }
 
 #--------------------------------------------------------------
+# Key File
+#--------------------------------------------------------------
+variable "key_file" {
+	type        = "string"
+	description = "describe your variable"
+	default     = "ssh_keys/database_key.pub"
+}
+
+#--------------------------------------------------------------
 # Availability Zones
 #--------------------------------------------------------------
 variable "azs" {
