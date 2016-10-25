@@ -12,12 +12,13 @@ resource "aws_instance" "bastion_server" {
 
 	tags {
 		Name = "bastion_host"
+		role = "bastion"
 	}
 
 	connection {
 		type     = "ssh"
-		user     = "root"
-		key_file = "${file("ssh_keys/id_rsa.pem")}"
+		user     = "centos"
+		key_file = "${var.key_file}"
 	}
 
 	provisioner "file" {
