@@ -3,6 +3,6 @@
 # install mariadb
 yum install -y mariadb-server
 
-# enable mariadb
+# enable and start mariadb
 systemctl enable mariadb
 systemctl start  mariadb
