@@ -1,8 +1,17 @@
 #--------------------------------------------------------------
+# Bastion Artifact (AMI)
+#--------------------------------------------------------------
+data "atlas_artifact" "Bastion" {
+	name    = "Panda/Bastion"
+	build   = "latest"
+	type    = "amazon.image"
+}
+
+#--------------------------------------------------------------
 # Bastion Instance
 #--------------------------------------------------------------
 resource "aws_instance" "bastion_server" {
-	ami             			= "${data.aws_ami.instance_ami.id}"
+	ami             			= "${data.atlas_artifact.Bastion.metadata_full.region-us-east-1}"
 	instance_type   			= "t2.micro"
 	subnet_id       			= "${aws_subnet.public.1.id}"
 	security_groups 			= ["${aws_security_group.bastion_security.id}"]
@@ -16,20 +25,7 @@ resource "aws_instance" "bastion_server" {
 	}
 
 	connection {
-		type     = "ssh"
 		user     = "centos"
-		key_file = "${var.key_file}"
-	}
-
-	provisioner "file" {
-		source      = "scripts/firewalld.sh"
-		destination = "/tmp/firewalld.sh"
-	}
-
-	provisioner "remote-exec" {
-		inline = [
-			"chmod +x /tmp/firewalld.sh",
-			"bash /tmp/firewalld.sh"
-		]
+		key_file = "${file('ssh_keys/database_key.pem')}" 
 	}
 }
