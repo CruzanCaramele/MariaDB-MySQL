@@ -1,25 +1,10 @@
 #--------------------------------------------------------------
-# Instance Ami
+# Instance Ami(s)
 #--------------------------------------------------------------
-data "aws_ami" "instance_ami" {
-	most_recent = true
-
-	filter {
-		name   = "virtualization-type"
-		values = ["hvm"]
-	}
-
-	filter {
-		name   = "product-code"
-		values = ["aw0evgkw8e5c1q413zgy5pjce"]
-	}
-
-	# filter {
-	# 	name   = "name"
-	# 	values = ["CentOS-7x86_64"]
-	# }
-
-	# owners = ["amazon"]
+data "atlas_artifact" "MasterDB" {
+	name    = "Panda/MasterDB"
+	build   = "latest"
+	type    = "amazon.image"
 }
 
 #--------------------------------------------------------------
@@ -53,7 +38,7 @@ resource "aws_instance" "database_slave" {
 }
 
 resource "aws_instance" "database_master" {
-	ami             = "${data.aws_ami.instance_ami.id}"
+	ami             = "${data.atlas_artifact.MasterDB.metadata_full.region-us-east-1}"
 	instance_type   = "t2.micro"
 	subnet_id       = "${aws_subnet.private.1.id}"
 	monitoring      = true
