@@ -1,0 +1,71 @@
+{
+	"variables"       : 
+	{
+		"ATLAS_NAME"            : "SlaveDB",
+		"ATLAS_TOKEN"           : "{{env `ATLAS_TOKEN`}}",
+		"ATLAS_USERNAME"        : "{{env `ATLAS_USERNAME`}}",
+		"AWS_ACCESS_KEY_ID"     : "{{env `AWS_ACCESS_KEY_ID`}}",
+		"AWS_SECRET_ACCESS_KEY" : "{{env `AWS_SECRET_ACCESS_KEY`}}"
+	},                             
+                                               
+	"builders"        :     
+	[                             
+	{                                       
+		"type"                  : "amazon-ebs",
+		"region"                : "us-east-1",
+		"ami_name"              : "SlaveDB {{timestamp}}",
+		"access_key"            : "{{ user `AWS_ACCESS_KEY_ID` }}",
+		"secret_key"            : "{{ user `AWS_SECRET_ACCESS_KEY` }}",
+		"source_ami"            : "ami-6d1c2007",
+		"ssh_timeout"           : "10m",
+		"ssh_username"          : "centos",
+		"ssh_pty"               : "true",
+		"instance_type"         : "t2.micro"
+	}
+    ],
+
+	"provisioners"    :
+	[
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"scripts"               : ["../scripts/mariaDB.sh"]
+	},
+
+	{
+		"type"                  : "file",
+		"source"                : "../scripts/slave-scripts/my.cnf",
+		"destination"           : "/tmp/my.cnf"
+	},
+
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"inline"                : ["mv /tmp/my.cnf /etc/my.cnf"]
+	},		
+
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"scripts"               : ["../scripts/slave-scripts/masterDB-sql.sh"]
+	}	
+	],                       
+                             
+	"post-processors" : 
+	[                  
+                             
+	{
+		"type"                  : "atlas",
+		"artifact"              : "{{user `ATLAS_USERNAME`}}/{{user `ATLAS_NAME`}}",
+		"artifact_type"         : "amazon.image",
+		"metadata"              : {"created_at": "{{timestamp}}"}
+	}                           
+                                        
+	],                                   
+                                       
+	"push"           :
+	{
+		"name"                  : "{{user `ATLAS_USERNAME`}}/{{user `ATLAS_NAME`}}",
+		"vcs"                   : false
+	}          
+}
