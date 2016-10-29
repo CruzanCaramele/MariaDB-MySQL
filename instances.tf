@@ -3,27 +3,27 @@
 #--------------------------------------------------------------
 data "atlas_artifact" "MasterDB" {
 	name    = "Panda/MasterDB"
-	build   = "latest"
 	type    = "amazon.image"
+	version = "latest"
 }
 
 data "atlas_artifact" "SlaveDB" {
 	name    = "Panda/SlaveDB"
-	build   = "latest"
 	type    = "amazon.image"
+	version = "latest"
 }
 
 data "atlas_artifact" "backup_database_ami" {
-	name  = "Panda/BackupDB"
-	build = "latest"
-	type  = "amazon.ami"
+	name    = "Panda/BackupDB"
+	type    = "amazon.image"
+	version = "latest"
 }
 
 #--------------------------------------------------------------
 # Instances
 #--------------------------------------------------------------
 resource "aws_instance" "database_backup" {
-	ami           		 = "${data.aws_ami.backup_database_ami.id}"
+	ami           		 = "${data.atlas_artifact.backup_database_ami.metadata_full.region-us-east-1}"
 	instance_type 	 	 = "t2.micro"
 	subnet_id     		 = "${aws_subnet.private.0.id}"
 	monitoring           = true
