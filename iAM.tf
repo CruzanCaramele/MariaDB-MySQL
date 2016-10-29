@@ -1,8 +1,8 @@
 #--------------------------------------------------------------
-# Backup Policy
+# S3 Bucket Policy
 #--------------------------------------------------------------
-resource "aws_iam_policy" "backup_policy" {
-	name        = "backup_policy"
+resource "aws_iam_policy" "s3_bucket_policy" {
+	name        = "s3_bucket_policy"
 	path        = "/"
 	description = "policy to be used by iam role for access to s3 bucket"
 	policy      = <<EOF
@@ -10,13 +10,23 @@ resource "aws_iam_policy" "backup_policy" {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "Stmt1476890301000",
+            "Sid": "Stmt1477654877000",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "Stmt1477654895000",
             "Effect": "Allow",
             "Action": [
                 "s3:*"
             ],
             "Resource": [
-                "arn:aws:s3:::db-backup-bucket*"
+                "*"
             ]
         }
     ]
@@ -51,7 +61,7 @@ EOF
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "backup_policy_attachment" {
     role       = "${aws_iam_role.backup_role.name}"
-    policy_arn = "${aws_iam_policy.backup_policy.arn}"
+    policy_arn = "${aws_iam_policy.s3_bucket_policy.arn}"
 }
 
 #--------------------------------------------------------------
