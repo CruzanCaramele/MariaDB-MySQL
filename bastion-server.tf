@@ -3,8 +3,8 @@
 #--------------------------------------------------------------
 data "atlas_artifact" "Bastion" {
 	name    = "Panda/Bastion"
-	build   = "latest"
 	type    = "amazon.image"
+	version = "latest"
 }
 
 #--------------------------------------------------------------
