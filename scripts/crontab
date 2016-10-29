@@ -1,0 +1,7 @@
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAIL_TO=root
+HOME=/
+
+
+30 0 * * * root bash /root/backup.sh
