@@ -16,6 +16,7 @@ resource "aws_instance" "bastion_server" {
 	subnet_id       			= "${aws_subnet.public.1.id}"
 	security_groups 			= ["${aws_security_group.bastion_security.id}"]
 	key_name        			= "${aws_key_pair.database_key.key_name}"
+	depends_on                  = ["aws_internet_gateway.database_gateway"]
 	monitoring      			= true
 	associate_public_ip_address = true
 
@@ -26,6 +27,6 @@ resource "aws_instance" "bastion_server" {
 
 	connection {
 		user     = "centos"
-		key_file = "${file('ssh_keys/database_key.pem')}" 
+		key_file = "${file("ssh_keys/database_key.pem")}" 
 	}
 }
