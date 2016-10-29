@@ -7,11 +7,26 @@ data "atlas_artifact" "MasterDB" {
 	type    = "amazon.image"
 }
 
+data "atlas_artifact" "SlaveDB" {
+	name    = "Panda/SlaveDB"
+	build   = "latest"
+	type    = "amazon.image"
+}
+
+data "aws_ami" "backup_database_ami" {
+	most_recent = true
+
+	filter {
+		name   = "name"
+		values = ["CentOS Linux 7 x86_64*"] 
+	}
+}
+
 #--------------------------------------------------------------
 # Instances
 #--------------------------------------------------------------
 resource "aws_instance" "database_backup" {
-	ami           		 = "${data.aws_ami.instance_ami.id}"
+	ami           		 = "${data.aws_ami.backup_database_ami.id}"
 	instance_type 	 	 = "t2.micro"
 	subnet_id     		 = "${aws_subnet.private.0.id}"
 	monitoring           = true
@@ -20,12 +35,12 @@ resource "aws_instance" "database_backup" {
 	iam_instance_profile = "${aws_iam_instance_profile.instance_profile.id}"
 
 	tags {
-		Name = "backup_backup"
+		Name = "backup_database"
 	}
 }
 
 resource "aws_instance" "database_slave" {
-	ami             = "${data.aws_ami.instance_ami.id}"
+	ami             = "${data.atlas_artifact.SlaveDB.metadata_full.region-us-east-1}"
 	instance_type   = "t2.micro"
 	subnet_id       = "${aws_subnet.private.1.id}"
 	monitoring      = true
