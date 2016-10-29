@@ -13,13 +13,10 @@ data "atlas_artifact" "SlaveDB" {
 	type    = "amazon.image"
 }
 
-data "aws_ami" "backup_database_ami" {
-	most_recent = true
-
-	filter {
-		name   = "name"
-		values = ["CentOS Linux 7 x86_64*"] 
-	}
+data "atlas_artifact" "backup_database_ami" {
+	name  = "Panda/BackupDB"
+	build = "latest"
+	type  = "amazon.ami"
 }
 
 #--------------------------------------------------------------
@@ -31,6 +28,7 @@ resource "aws_instance" "database_backup" {
 	subnet_id     		 = "${aws_subnet.private.0.id}"
 	monitoring           = true
 	key_name             = "${aws_key_pair.database_key.key_name}"
+	depends_on           = ["aws_instance.database_slave"]
 	security_groups      = ["${aws_security_group.database_backup_security_group.id}"]
 	iam_instance_profile = "${aws_iam_instance_profile.instance_profile.id}"
 
@@ -45,6 +43,7 @@ resource "aws_instance" "database_slave" {
 	subnet_id       = "${aws_subnet.private.1.id}"
 	monitoring      = true
 	key_name        = "${aws_key_pair.database_key.key_name}"
+	depends_on      = ["aws_instance.database_master"]
 	security_groups = ["${aws_security_group.database_master_security_group.id}"] 
 
 	tags {
@@ -58,6 +57,7 @@ resource "aws_instance" "database_master" {
 	subnet_id       = "${aws_subnet.private.1.id}"
 	monitoring      = true
 	key_name        = "${aws_key_pair.database_key.key_name}"
+	depends_on      = ["aws_instance.bastion_server"]
 	security_groups = ["${aws_security_group.database_master_security_group.id}"] 
 
 	tags {
