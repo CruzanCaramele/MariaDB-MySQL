@@ -4,4 +4,4 @@ MAIL_TO=root
 HOME=/
 
 
-30 0 * * * root bash /root/backup.sh
+30 0 * * * centos bash /centos/home/backup.sh
