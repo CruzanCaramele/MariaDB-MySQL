@@ -27,13 +27,18 @@ resource "aws_instance" "database_backup" {
 	instance_type 	 	 = "t2.micro"
 	subnet_id     		 = "${aws_subnet.private.0.id}"
 	monitoring           = true
-	key_name             = "${aws_key_pair.database_key.key_name}"
+	key_name             = "${module.ssh_keys.key_name}"
 	depends_on           = ["aws_instance.database_slave"]
 	security_groups      = ["${aws_security_group.database_backup_security_group.id}"]
 	iam_instance_profile = "${aws_iam_instance_profile.instance_profile.id}"
 
 	tags {
 		Name = "backup_database"
+	}
+
+	connection {
+		user        = "root"
+		private_key = "${module.ssh_keys.private_key_path}"
 	}
 }
 
@@ -42,13 +47,18 @@ resource "aws_instance" "database_slave" {
 	instance_type   = "t2.micro"
 	subnet_id       = "${aws_subnet.private.1.id}"
 	monitoring      = true
-	key_name        = "${aws_key_pair.database_key.key_name}"
+	key_name        = "${module.ssh_keys.key_name}"
 	depends_on      = ["aws_instance.database_master"]
 	security_groups = ["${aws_security_group.database_master_security_group.id}"] 
 
 	tags {
 		Name = "database_slave"
 	}
+
+	connection {
+		user        = "root"
+		private_key = "${module.ssh_keys.private_key_path}"
+	}	
 }
 
 resource "aws_instance" "database_master" {
@@ -56,11 +66,16 @@ resource "aws_instance" "database_master" {
 	instance_type   = "t2.micro"
 	subnet_id       = "${aws_subnet.private.1.id}"
 	monitoring      = true
-	key_name        = "${aws_key_pair.database_key.key_name}"
+	key_name        = "${module.ssh_keys.key_name}"
 	depends_on      = ["aws_instance.bastion_server"]
 	security_groups = ["${aws_security_group.database_master_security_group.id}"] 
 
 	tags {
 		Name = "database_master"
 	}
+
+	connection {
+		user        = "centos"
+		private_key = "${module.ssh_keys.private_key_path}"
+	}	
 }
