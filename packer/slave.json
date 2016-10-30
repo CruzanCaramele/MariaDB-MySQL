@@ -48,18 +48,6 @@
 		"type"                  : "shell",
 		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
 		"scripts"               : ["../scripts/slave-scripts/masterDB-sql.sh"]
-	},
-
-	{
-		"type"                  : "file",
-		"source"                : "../ssh_keys/database_key.pub",
-		"destination"           : "/tmp/database_key.pub"
-	},	
-
-	{
-		"type"                  : "shell",
-		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
-		"inline"                : ["mv /tmp/database_key.pub ~/.ssh/"]
 	}
 
 	],                       
