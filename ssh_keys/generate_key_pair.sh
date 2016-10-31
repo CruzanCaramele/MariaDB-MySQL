@@ -13,7 +13,7 @@ else
 
     if [ -z "$EXISTING_KEY" ]; then
         echo No key pair exists and no private key arg was passed, generating new keys
-        openssl genrsa -out $KEY.pem 1024
+        openssl genrsa -out $KEY.pem 2048
         chmod 700 $KEY.pem
         ssh-keygen -y -f $KEY.pem > $KEY.pub
 	chmod 700 $KEY.pub
