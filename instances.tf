@@ -29,7 +29,7 @@ resource "aws_instance" "database_backup" {
 	monitoring           = true
 	key_name             = "${module.ssh_keys.key_name}"
 	depends_on           = ["aws_instance.database_slave"]
-	security_groups      = ["${aws_security_group.database_backup_security_group.id}"]
+	security_groups      = ["${aws_security_group.database_backup_security_group.id}","${aws_security_group.consul_security_group.id}"]
 	iam_instance_profile = "${aws_iam_instance_profile.instance_profile.id}"
 
 	tags {
@@ -49,7 +49,7 @@ resource "aws_instance" "database_slave" {
 	monitoring      = true
 	key_name        = "${module.ssh_keys.key_name}"
 	depends_on      = ["aws_instance.database_master"]
-	security_groups = ["${aws_security_group.database_master_security_group.id}"] 
+	security_groups = ["${aws_security_group.database_master_security_group.id}","${aws_security_group.consul_security_group.id}"] 
 
 	tags {
 		Name = "database_slave"
@@ -68,7 +68,7 @@ resource "aws_instance" "database_master" {
 	monitoring      = true
 	key_name        = "${module.ssh_keys.key_name}"
 	depends_on      = ["aws_instance.bastion_server"]
-	security_groups = ["${aws_security_group.database_master_security_group.id}"] 
+	security_groups = ["${aws_security_group.database_master_security_group.id}","${aws_security_group.consul_security_group.id}"] 
 
 	tags {
 		Name = "database_master"
