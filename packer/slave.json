@@ -48,6 +48,42 @@
 		"type"                  : "shell",
 		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
 		"scripts"               : ["../scripts/slave-scripts/masterDB-sql.sh"]
+	},
+
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"scripts"               : ["../scripts/common/install_consul.sh", "../scripts/consul-clients/dirs.sh"]
+	},
+
+	{
+		"type"                  : "file",
+		"source"                : "../scripts/consul-clients/databases.json",
+		"destination"           : "/tmp/config.json"
+	},	
+
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"inline"                : ["mv /tmp/config.json /etc/consul.d/client/databases.json"]
+	},
+
+	{
+		"type"                  : "file",
+		"source"                : "../scripts/consul-clients/consul.service",
+		"destination"           : "/tmp/consul.service"
+	},	
+
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"inline"                : ["mv /tmp/consul.service /etc/systemd/system/consul.service"]
+	},
+
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"inline"                : ["systemctl enable consul", "systemctl start consul"]
 	}
 
 	],                       
