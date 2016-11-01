@@ -1,0 +1,84 @@
+{
+	"variables"       : 
+	{
+		"ATLAS_NAME"            : "Consul-Server",
+		"ATLAS_TOKEN"           : "{{env `ATLAS_TOKEN`}}",
+		"ATLAS_USERNAME"        : "{{env `ATLAS_USERNAME`}}",
+		"AWS_ACCESS_KEY_ID"     : "{{env `AWS_ACCESS_KEY_ID`}}",
+		"AWS_SECRET_ACCESS_KEY" : "{{env `AWS_SECRET_ACCESS_KEY`}}"
+	},                             
+                                               
+	"builders"        :     
+	[                             
+	{                                       
+		"type"                  : "amazon-ebs",
+		"region"                : "us-east-1",
+		"ami_name"              : "Consul-Server {{timestamp}}",
+		"access_key"            : "{{ user `AWS_ACCESS_KEY_ID` }}",
+		"secret_key"            : "{{ user `AWS_SECRET_ACCESS_KEY` }}",
+		"source_ami"            : "ami-6d1c2007",
+		"ssh_timeout"           : "10m",
+		"ssh_username"          : "centos",
+		"ssh_pty"               : "true",
+		"instance_type"         : "t2.micro"
+	}
+    ],
+
+	"provisioners"    :
+	[
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"scripts"               : ["../scripts/common/install_consul.sh", "../scripts/consul-servers/dirs.sh"]
+	},
+
+	{
+		"type"                  : "file",
+		"source"                : "../scripts/consul-servers/config.json",
+		"destination"           : "/tmp/config.json"
+	},	
+
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"inline"                : ["mv /tmp/config.json /etc/consul.d/server/config.json"]
+	},
+
+	{
+		"type"                  : "file",
+		"source"                : "../scripts/consul-servers/consul.service",
+		"destination"           : "/tmp/consul.service"
+	},	
+
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"inline"                : ["mv /tmp/consul.service /etc/systemd/system/consul.service"]
+	},
+
+	{
+		"type"                  : "shell",
+		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+		"inline"                : ["systemctl enable consul", "systemctl start consul"]
+	}		
+
+	],                       
+                             
+	"post-processors" : 
+	[                  
+                             
+	{
+		"type"                  : "atlas",
+		"artifact"              : "{{user `ATLAS_USERNAME`}}/{{user `ATLAS_NAME`}}",
+		"artifact_type"         : "amazon.image",
+		"metadata"              : {"created_at": "{{timestamp}}"}
+	}                           
+                                        
+	],                                   
+                                       
+	"push"           :
+	{
+		"name"                  : "{{user `ATLAS_USERNAME`}}/{{user `ATLAS_NAME`}}",
+		"vcs"                   : false
+	}          
+}
