@@ -1,0 +1,15 @@
+{
+	
+	"ui_dir"                 : "/opt/consul/ui",
+	"bind_addr"              : "0.0.0.0",
+	"client_addr"            : "0.0.0.0",
+	"datacenter"             : "dc1",
+	"data_dir"               : "/var/consul",
+	"log_level"              : "INFO",
+	"enable_syslog"          : true,
+	"enable_debug"           : true,
+	"server"                 : true,
+	"bootstrap_expect"       : 3,
+	"leave_on_terminate"     : true,
+	"skip_leave_on_interrupt": true,
+}
