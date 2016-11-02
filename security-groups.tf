@@ -6,28 +6,69 @@ resource "aws_security_group" "primary" {
 	description = "Default security group that allows inbound and outbound traffic from all instances in the VPC"
 	vpc_id      = "${aws_vpc.database_setup.id}"
 
-	ingress {
-		from_port = "0"
-		to_port   = "0"
-		protocol  = "-1"
-		self      = true
-	}
+    // allows traffic from the SG itself for tcp
+    ingress {
+        from_port = 0
+        to_port   = 65535
+        protocol  = "tcp"
+        self      = true
+    }
 
-	egress {
-		from_port   = "0"
-		to_port     = "0"
-		protocol    = "-1"
-		self        = true
-		cidr_blocks = ["0.0.0.0/0"]
-	}
+    // allows traffic from the SG itself for udp
+    ingress {
+        from_port = 0
+        to_port   = 65535
+        protocol  = "udp"
+        self      = true
+    }
 
-	tags {
-		Name = "sonar-primary-vpc"
-	}
+    // allow traffic for TCP 22
+    ingress {
+        from_port   = 22
+        to_port     = 22
+        protocol    = "tcp"
+        cidr_blocks = ["${var.source_cidr_block}"]
+    }
 
-	lifecycle {
-		create_before_destroy = true
-	}
+    // allow traffic for TCP 80
+    ingress {
+        from_port   = 80
+        to_port     = 80
+        protocol    = "tcp"
+        cidr_blocks = ["${var.source_cidr_block}"]
+    }
+
+    // allow traffic for TCP 443
+    ingress {
+        from_port   = 443
+        to_port     = 443
+        protocol    = "tcp"
+        cidr_blocks = ["${var.source_cidr_block}"]
+    }
+
+
+    // allow traffic for TCP 1099 (JMX)
+    ingress {
+        from_port   = 1099
+        to_port     = 1099
+        protocol    = "tcp"
+        cidr_blocks = ["${var.source_cidr_block}"]
+    }
+
+    // allow traffic for TCP 8080
+    ingress {
+        from_port   = 8080
+        to_port     = 8080
+        protocol    = "tcp"
+        cidr_blocks = ["${var.source_cidr_block}"]
+    }
+
+    egress {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }  
 }
 
 #--------------------------------------------------------------
@@ -118,50 +159,14 @@ resource "aws_security_group" "database_master_security_group" {
 	}
 }
 
-#--------------------------------------------------------------
-# NAT Instance Security Group
-#--------------------------------------------------------------
-resource "aws_security_group" "nat_instance_security_group" {
-	name        = "nat_instance_security_group"
-	description = "Security group for NAT instance"
-	vpc_id      = "${aws_vpc.database_setup.id}"
-
-	ingress {
-		from_port       = 22
-		to_port         = 22
-		protocol        = "tcp"
-		security_groups = ["${aws_security_group.bastion_security.id}"]
-	}
-
-	ingress {
-		from_port       = 80
-		to_port         = 80
-		protocol        = "tcp"
-		cidr_blocks     = ["10.0.2.0/24","10.0.3.0/24","10.0.0.0/24","10.0.1.0/24"]
-	}
-
-	ingress {
-		from_port       = 443
-		to_port         = 443
-		protocol        = "tcp"
-		cidr_blocks     = ["10.0.2.0/24","10.0.3.0/24","10.0.0.0/24","10.0.1.0/24"]
-	}
-
-	egress {
-		from_port   	= 0
-		to_port     	= 0
-		protocol    	= "-1"
-		cidr_blocks 	= ["0.0.0.0/0"]
-	}
-}
 
 #--------------------------------------------------------------
 # Consul Security Group
 #--------------------------------------------------------------
 resource "aws_security_group" "consul_security_group" {
-    name = "consul_security_group"
+    name        = "consul_security_group"
     description = "Security Group for consul"
-    vpc_id = "${aws_vpc.database_setup.id}"
+    vpc_id      = "${aws_vpc.database_setup.id}"
 
     // allows traffic from the SG itself for tcp
     ingress {
@@ -186,14 +191,7 @@ resource "aws_security_group" "consul_security_group" {
         protocol 	= "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
-
-    // allow traffic for TCP 80 (http)
-    ingress {
-        from_port 	= 80
-        to_port 	= 80
-        protocol 	= "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }    
+       
 
     // allow traffic for TCP 8300 (Server RPC)
     ingress {
