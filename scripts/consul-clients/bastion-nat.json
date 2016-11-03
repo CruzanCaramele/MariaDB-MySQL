@@ -11,5 +11,14 @@
 	"leave_on_terminate"     : true,
 	"skip_leave_on_interrupt": true,
 	"rejoin_after_leave"     : true,
-	"retry_join"             : ["10.0.0.95"]
+
+	"retry_join"             : [ 
+            "10.0.0.10:8301",
+            "10.0.0.11:8301",
+            "10.0.0.12:8301"
+    ],
+	
+	"addresses": {
+       "http": "0.0.0.0"
+    }
 }
