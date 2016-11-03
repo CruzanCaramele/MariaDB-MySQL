@@ -18,7 +18,7 @@ resource "aws_instance" "bastion_server" {
 	                               "${aws_security_group.consul_security_group.id}",
 	                               "${aws_security_group.primary.id}"]
 	key_name        			= "${module.ssh_keys.key_name}"
-	depends_on                  = ["aws_internet_gateway.database_gateway"]
+	depends_on                  = ["aws_internet_gateway.database_gateway","aws_instance.consul_server"]
 	monitoring      			= true
 	associate_public_ip_address = true
 
