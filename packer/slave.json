@@ -83,7 +83,7 @@
 	{
 		"type"                  : "shell",
 		"execute_command"       : "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
-		"inline"                : ["systemctl enable consul", "systemctl start consul"]
+		"inline"                : ["systemctl enable consul"]
 	}
 
 	],                       

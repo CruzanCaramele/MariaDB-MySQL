@@ -5,11 +5,11 @@ After=network-online.target
 
 [Service]
 EnvironmentFile=-/etc/sysconfig/consul
-Environment=GOMAXPROCS=2
+Environment=GOMAXPROCS=1
 Restart=on-failure
 ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d/server
 ExecReload=/bin/kill -HUP $MAINPID
-KillSignal=SIGIN
+KillSignal=SIGINT
 
 [Install]
 WantedBy=multi-user.target
