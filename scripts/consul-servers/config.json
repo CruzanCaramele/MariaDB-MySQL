@@ -1,7 +1,7 @@
 {
 	
 	"ui"                     : true,
-	"bind_addr"              : "10.0.0.95",
+	"bind_addr"              : "0.0.0.0",
 	"client_addr"            : "0.0.0.0",
 	"datacenter"             : "dc1",
 	"data_dir"               : "/var/consul",
@@ -9,10 +9,16 @@
 	"enable_syslog"          : true,
 	"enable_debug"           : true,
 	"server"                 : true,
-	"bootstrap_expect"       : 1,
+	"bootstrap_expect"       : 3,
 	"leave_on_terminate"     : false,
 	"skip_leave_on_interrupt": true,
 	"rejoin_after_leave"     : true,
+
+	"retry_join"             : [ 
+            "10.0.0.10:8301",
+            "10.0.0.11:8301",
+            "10.0.0.12:8301"
+    ],
 
 	"service": {
 		"name" : "consul",
