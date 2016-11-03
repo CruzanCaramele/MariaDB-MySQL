@@ -33,10 +33,11 @@ resource "aws_subnet" "private" {
 
 resource "aws_route_table" "private_route_table" {
 	vpc_id = "${aws_vpc.database_setup.id}"
+	count  = "${length(split(",", var.azs))}"
 
 	route {
 		cidr_block  = "0.0.0.0/0"
-		instance_id = "${aws_instance.nat_instance.id}"
+		nat_gateway_id = "${element(aws_nat_gateway.database_nat.*.id, count.index)}"
 	}
 
 	tags {
@@ -47,7 +48,24 @@ resource "aws_route_table" "private_route_table" {
 resource "aws_route_table_association" "private_route_table_association" {
 	count          = "${length(compact(split(",", var.private_cidrs)))}"
 	subnet_id      = "${element(aws_subnet.private.*.id, count.index)}"
-	route_table_id = "${aws_route_table.private_route_table.id}"
+	route_table_id = "${element(aws_route_table.private_route_table.*.id, count.index)}"
+}
+
+#--------------------------------------------------------------
+# NAT Eip
+#--------------------------------------------------------------
+resource "aws_eip" "database_nat_eip" {
+	vpc   = true
+	count = "${length(split(",", var.azs))}"
+}
+
+#--------------------------------------------------------------
+# NAT Gateway
+#--------------------------------------------------------------
+resource "aws_nat_gateway" "database_nat" {
+	count         = "${length(split(",", var.azs))}"
+	allocation_id = "${element(aws_eip.database_nat_eip.*.id, count.index)}"
+	subnet_id     = "${element(aws_subnet.public.*.id, count.index)}"
 }
 
 #--------------------------------------------------------------
