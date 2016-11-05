@@ -11,5 +11,10 @@ This includes all of those requirements and build out the architecture starting 
 ![Graph](databaseSetup.png)
 
 
+
 #### Service Discovery, Monitoring & Health Checks
 ![Graph](health-status.png)
+
+
+#### configuration Plan
+![Graph](graph.png)
