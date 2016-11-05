@@ -2,10 +2,11 @@
 # S3 Bucket Policy
 #--------------------------------------------------------------
 resource "aws_iam_policy" "s3_bucket_policy" {
-	name        = "s3_bucket_policy"
-	path        = "/"
-	description = "policy to be used by iam role for access to s3 bucket"
-	policy      = <<EOF
+  name        = "s3_bucket_policy"
+  path        = "/"
+  description = "policy to be used by iam role for access to s3 bucket"
+
+  policy = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -38,8 +39,9 @@ EOF
 # Backup Role
 #--------------------------------------------------------------
 resource "aws_iam_role" "backup_role" {
-	name 			   = "backup_role"
-	assume_role_policy = <<EOF
+  name = "backup_role"
+
+  assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -60,8 +62,8 @@ EOF
 # IAM Role Policy Attachment
 #--------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "backup_policy_attachment" {
-    role       = "${aws_iam_role.backup_role.name}"
-    policy_arn = "${aws_iam_policy.s3_bucket_policy.arn}"
+  role       = "${aws_iam_role.backup_role.name}"
+  policy_arn = "${aws_iam_policy.s3_bucket_policy.arn}"
 }
 
 #--------------------------------------------------------------
