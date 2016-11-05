@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KEY_NAME=${1:-database_key}
+KEY_NAME=${1:-}
 EXISTING_KEY=$2
 KEY_PATH=.
 KEY=$KEY_PATH/$KEY_NAME
