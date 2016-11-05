@@ -9,7 +9,7 @@ Environment=GOMAXPROCS=1
 Restart=on-failure
 ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d/client
 ExecReload=/bin/kill -HUP $MAINPID
-KillSignal=SIGINT
+KillSignal=SIGTERM
 
 [Install]
 WantedBy=multi-user.target
